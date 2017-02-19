@@ -93,10 +93,13 @@ class Player extends GameObject {
      * @param name
      * @param type 
      */
+
     public Player(String name,String type, int[] coord) {//sets the different stats for each player class
+
         this.playerName = name;
         this.coord = coord;
         this.type = type;
+        this.coord = coord;
         if (type.equals("Archer")) {
             HP = 80;
             atk = 15;
