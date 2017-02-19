@@ -1,3 +1,4 @@
+package Pset3;
 /**
  * Created by Matthew on 17/2/2017.
  */
@@ -32,7 +33,7 @@ public class GameObject {
      * @return 
      */
     public String getSprite(){
-        return "point to sprite folder + sprite name";
+        return sprite;
     }
     /**
      * Used to switch to different sprites.
@@ -40,26 +41,34 @@ public class GameObject {
      */
     public void changeSprite(String newSprite) {
         sprite = newSprite;
+        System.out.println("Changed sprite");
     }
     /**
      * Check if the HP is less than zero. If it is, run the expire method.
      */
-    public void checkExpire() {//Check when the object's HP reaches 0
+    public boolean checkExpire() {//Check when the object's HP reaches 0
         if (HP <= 0) {
            expire();
         }
+        return true;
     }
     /**
      * Reduces HP by specified amount 
      * @param dmg 
      */
     public void takeDamage(int dmg) {
-        HP -= dmg;
+        if(dmg>=0) {
+            HP -= dmg;
+            checkExpire();
+        }
+        else {
+            System.out.println("Damage cannot be negative");        }
     }
     /**
      * Runs the script to destroy object as well as expire sprite.
      */
     public void expire(){
+        System.out.println("Died");
         changeSprite("expired sprite path");
     }
 }
@@ -84,20 +93,21 @@ class Player extends GameObject {
      * @param name
      * @param type 
      */
-    public Player(String name,String type) {//sets the different stats for each player class
+    public Player(String name,String type, int[] coord) {//sets the different stats for each player class
         this.playerName = name;
+        this.coord = coord;
         this.type = type;
         if (type.equals("Archer")) {
             HP = 80;
             atk = 15;
             this.sprite = type;
-            range = 1;
+            range = 5;
         }
         if (type.equals("Warrior")) {
             HP = 120;
             atk = 10;
             this.sprite = type;
-            range = 5;
+            range = 1;
         }
         if (type.equals("Magician")) {
             HP = 60;
@@ -110,13 +120,15 @@ class Player extends GameObject {
      * calls method to create hitbox in front of character depending on range
      * @return 
      */
-    public int[] attack() {
+    public void attack(Player enemy) {
         //may vary based on type
         atkAnimation(type);
-        int[] atkCoord = null;
-        atkCoord[0] = this.getCoord()[0]+(orientation*range);
-        atkCoord[1] = this.getCoord()[1];
-        return atkCoord;
+        if(inRange(enemy)){
+            enemy.getAttacked(atk);
+        }
+        else{
+            System.out.println("Missed");
+        }
         /*
         if (inRange(Player player)) {//Check if another player is caught in the range of the attack
             player.takeDamage(Atk);
@@ -124,6 +136,8 @@ class Player extends GameObject {
                 player.die();
             }
         }
+
+
         */
     }/**
      * calls animation sprite
@@ -133,11 +147,14 @@ class Player extends GameObject {
         if (type.equals("Archer")) {
             System.out.println("run Archer attack sprite");
         }
-        if (type.equals("Warrior")) {
+        else if (type.equals("Warrior")) {
             System.out.println("run warrior attack sprite");
         }
-        if (type.equals("Magician")) {
+        else if (type.equals("Magician")) {
             System.out.println("run Magician attack sprite");
+        }
+        else{
+            System.out.println("Invalid attack animation!");
         }
     }/**
      * calls sprite to get damaged
@@ -181,17 +198,19 @@ class Player extends GameObject {
      */
     public boolean inRange(Player player) {//Checks if player is in range to attack another player
         if (type.equals("Archer")) {
-            if (player.getCoord()[0] - coord[0] <= 3) {
+            if (Math.abs(player.getCoord()[0] - coord[0]) <= 3) {
                 return Boolean.TRUE;
             }
         }
         if (type.equals("Warrior")) {
-            if (player.getCoord()[0] - coord[0] <= 1) {
+            if (Math.abs(player.getCoord()[0] - coord[0]) <= 1) {
+                System.out.println(player.getCoord()[0]);
+                System.out.println(coord[0]);
                 return Boolean.TRUE;
             }
         }
         if (type.equals("Magician")) {
-            if (player.getCoord()[0] - coord[0] <= 5) {
+            if (Math.abs(player.getCoord()[0] - coord[0]) <= 5) {
                 return Boolean.TRUE;
             }
         }
