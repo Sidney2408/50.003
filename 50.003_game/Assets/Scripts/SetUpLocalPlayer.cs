@@ -13,11 +13,16 @@ public class SetUpLocalPlayer : NetworkBehaviour {
 
     // Use this for initialization
     void Start () {
-        if (isLocalPlayer)
+        if (!isLocalPlayer)
         {
-            GetComponent<PlayerScript>().enabled = true;
+            gameObject.tag = "Enemy";
         }
-	}
+        else
+        {
+            gameObject.tag = "Player";
+            //gameObject.GetComponent<PlayerScript>().enabled = true;
+        }
+    }
 
     private void Update()
     {

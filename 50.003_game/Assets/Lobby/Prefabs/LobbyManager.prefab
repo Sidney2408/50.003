@@ -1885,7 +1885,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.8
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -3194,12 +3194,16 @@ MonoBehaviour:
   m_ScriptCRCCheck: 1
   m_MaxDelay: 0.01
   m_LogLevel: 2
-  m_PlayerPrefab: {fileID: 0}
+  m_PlayerPrefab: {fileID: 1207939955934916, guid: 898aecf1d8838a140b1db787343be5aa,
+    type: 2}
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 0
   m_OfflineScene: NetworkLobby
-  m_OnlineScene: 
-  m_SpawnPrefabs: []
+  m_OnlineScene: Level_1
+  m_SpawnPrefabs:
+  - {fileID: 1207939955934916, guid: 898aecf1d8838a140b1db787343be5aa, type: 2}
+  - {fileID: 1504313991652232, guid: 1d3a9ffafbf41ae49923b1b435ed88c8, type: 2}
+  - {fileID: 1985656111407100, guid: 3d601d4468613bd458c5c152903fb207, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
@@ -3242,15 +3246,16 @@ MonoBehaviour:
   matchSize: 4
   isNetworkActive: 0
   matchMaker: {fileID: 0}
-  m_ShowLobbyGUI: 0
-  m_MaxPlayers: 3
-  m_MaxPlayersPerConnection: 2
+  m_ShowLobbyGUI: 1
+  m_MaxPlayers: 4
+  m_MaxPlayersPerConnection: 1
   m_MinPlayers: 2
   m_LobbyPlayerPrefab: {fileID: 11487034, guid: ad727d7e1462ecc4f83c898ecc501997,
     type: 2}
-  m_GamePlayerPrefab: {fileID: 0}
-  m_LobbyScene: 
-  m_PlayScene: 
+  m_GamePlayerPrefab: {fileID: 1207939955934916, guid: 898aecf1d8838a140b1db787343be5aa,
+    type: 2}
+  m_LobbyScene: NetworkLobby
+  m_PlayScene: Level_1
   lobbySlots: []
   prematchCountdown: 3
   topPanel: {fileID: 11424994}

@@ -2,19 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TouchControls : MonoBehaviour {
-
+public class TouchControls : MonoBehaviour
+{
+    int orient;
     private PlayerScript thePlayer;
 
-	// Use this for initialization
-	void Start () {
-        
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        thePlayer = FindObjectOfType<PlayerScript>();
+    // Use this for initialization
+    void Start()
+    {
+        orient = 0;
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+        thePlayer = FindObjectOfType<PlayerScript>();
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null) {
+            orient = (int)player.transform.localScale.x;
+        }
     }
     public void LeftArrow()
     {
@@ -34,6 +41,6 @@ public class TouchControls : MonoBehaviour {
     }
     public void Shuriken()
     {
-        thePlayer.FireStar();
+        thePlayer.CmdFireStar(orient);
     }
 }

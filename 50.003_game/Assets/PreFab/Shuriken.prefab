@@ -23,10 +23,12 @@ GameObject:
   - component: {fileID: 58718037941321036}
   - component: {fileID: 50526369618654084}
   - component: {fileID: 114180230359696986}
+  - component: {fileID: 114886367329190384}
+  - component: {fileID: 114528960470503516}
   m_Layer: 12
   m_Name: Shuriken
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -94,6 +96,58 @@ MonoBehaviour:
     type: 2}
   NinjaStarImpact: {fileID: 1985656111407100, guid: 3d601d4468613bd458c5c152903fb207,
     type: 2}
+--- !u!114 &114528960470503516
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1504313991652232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 2
+  m_SendInterval: 0
+  m_SyncRotationAxis: 3
+  m_RotationSyncCompression: 0
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_SnapThreshold: 5
+  m_InterpolateRotation: 1
+  m_InterpolateMovement: 1
+--- !u!114 &114886367329190384
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1504313991652232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 29
+    i1: 58
+    i2: 159
+    i3: 250
+    i4: 251
+    i5: 244
+    i6: 26
+    i7: 228
+    i8: 153
+    i9: 35
+    i10: 177
+    i11: 180
+    i12: 53
+    i13: 237
+    i14: 136
+    i15: 200
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!212 &212650634084895686
 SpriteRenderer:
   m_ObjectHideFlags: 1
