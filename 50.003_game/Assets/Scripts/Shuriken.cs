@@ -31,23 +31,10 @@ public class Shuriken : MonoBehaviour {
     {
         //Edit > ProjectSettings > Physics2D settings (normal mode) > Collision Layer matrix
         Debug.Log("Hit something");
-        var hit = collision.gameObject;
-        var health = hit.GetComponent<Health>();
-        var player = hit.GetComponent<PlayerScript>();
-        if (health != null&& player!= null)
+        if (collision.tag.Equals("Enemy") )
         {
-            health.TakeDamage(10);
-            player.knockbackCount = player.knockbackLength;
-            if (collision.transform.position.x<transform.position.x)
-            {
-                player.knockFromRight = true;
-            }
-            else
-            {
-                player.knockFromRight = false;
-            }
-
         }
+        Instantiate(this.NinjaStarImpact, transform.position, transform.rotation);
         Destroy(gameObject);
     }
 }

@@ -18,7 +18,6 @@ public class TouchControls : MonoBehaviour
     {
         thePlayer = FindObjectOfType<PlayerScript>();
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-
         if (player != null) {
             orient = (int)player.transform.localScale.x;
         }
@@ -37,6 +36,7 @@ public class TouchControls : MonoBehaviour
     }
     public void Jump()
     {
+        Debug.Log("Jump button pressed");
         thePlayer.Jump();
     }
     public void Shuriken()

@@ -29,7 +29,7 @@ namespace Prototype.NetworkLobby
 
         public LobbyInfoPanel infoPanel;
         public LobbyCountdownPanel countdownPanel;
-        public GameObject addPlayerButton;
+        public GameObject addPlayerButton; 
 
         protected RectTransform currentPanel;
 
@@ -37,6 +37,9 @@ namespace Prototype.NetworkLobby
 
         public Text statusInfo;
         public Text hostInfo;
+
+        public GameObject GameOverScreen;
+
 
         //Client numPlayers from NetworkManager is always 0, so we count (throught connect/destroy in LobbyPlayer) the number
         //of players, so that even client know how many player there is.
@@ -65,6 +68,8 @@ namespace Prototype.NetworkLobby
             DontDestroyOnLoad(gameObject);
 
             SetServerInfo("Offline", "None");
+
+            GameOverScreen = GameObject.FindGameObjectWithTag("GameOverPanel");
         }
 
         public override void OnLobbyClientSceneChanged(NetworkConnection conn)
@@ -160,6 +165,8 @@ namespace Prototype.NetworkLobby
         public BackButtonDelegate backDelegate;
         public void GoBackButton()
         {
+
+            GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(false);
             backDelegate();
 			topPanel.isInGame = false;
         }

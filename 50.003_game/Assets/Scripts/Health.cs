@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class Health : NetworkBehaviour{
@@ -42,13 +43,13 @@ public class Health : NetworkBehaviour{
             if (destroyOnDeath)
             {
                 Destroy(gameObject);
-            }
-            else
-            {
-                currentHealth = maxHealth;
-                Debug.Log("Dead");
-                // called on the Server, invoked on the Clients
-                //RpcRespawn();
+
+                if (isLocalPlayer)
+                {
+                    Debug.Log("You died!");
+                   
+                }
+                
             }
         }
     }
@@ -58,7 +59,6 @@ public class Health : NetworkBehaviour{
         /*
          When you use hook functions the syncvar isn't automatically updated, this is by design.
          */
-
         healthBar.sizeDelta = new Vector2(newhealth, healthBar.sizeDelta.y);
         currentHealth = newhealth;//Forgot to put this in!
         //Funnily enough this function procs

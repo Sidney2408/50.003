@@ -2,40 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Prototype.NetworkLobby;
 
-//Multilinecomments
-//Select a bunch of text then Ctrl+K+C
-//Bug fixes:
-//1.GetKey, not GetKeyDown for moving (ConstantForce velocity)
-//2.Don't put 0 as x argument for move L/R; it kills upward velocity instantlry
-//float y_component = GetComponent<Rigidbody2D>().velocity.y; to capture initial velocity components
-//Always set animator to animate physics!
+
+
 
 public class PlayerScript : NetworkBehaviour{
+    //Code for moving 
     public float moveSpeed;
     public float jumpHeight;
     public Transform groundCheck;
     private float moveVelocity;
 
+    //Code for jumping 
     public float groundCheckRadius;
     public LayerMask whatIsGround;
-    private bool isGrounded;//We only want the object to decide if it is on the ground
+    private bool isGrounded;
     private bool exhausted;
     private int jump_count;
-
     public int max_jumps;
+
+    //Animator
     private Animator anim;
 
+    //Code for shooting 
     public Transform firePoint;
     public GameObject ninjaStar;
     public GameObject gameCamera;
     public float shotDelay;
     private float shotDelayCounter;
 
+    //Code for knockback 
     public float knockback;
     public float knockbackCount;
     public float knockbackLength;
     public bool knockFromRight;
+
+    //Dead state
+    private bool isDead;
+    public GameObject GameOverScreen;
+    
 
 
 
@@ -44,45 +51,31 @@ public class PlayerScript : NetworkBehaviour{
 
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
 
-        //Create a circle
-        //TransformPoint, we need posn of Transform
-        //
         if (anim == null)
         {
             anim = GetComponent<Animator>();
         }
     }
 
-    // Use this for initialization
     void Start() {
-
-        
-
-
+        isDead = false;
+        GameOverScreen = GameObject.FindGameObjectWithTag("GameOverPanel");
         if (anim == null)
         {
+
             anim = GetComponent<Animator>();
         }
 
-        jump_count = 2;
         if (gameCamera == null)
         {
-            // UNDONE:  
             gameCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            //gameCamera.GetComponent<CameraController>().enabled = true;
         }
 
 
         gameObject.GetComponent < NetworkAnimator > ().SetParameterAutoSend(0, true);
-       
-
-
+        jump_count = 2;
     }
 
-
-    //}
-
-    // Update is called once per frame
     void Update()
     {
 
@@ -94,34 +87,29 @@ public class PlayerScript : NetworkBehaviour{
         if (anim.GetBool("Sword"))
         {
             anim.SetBool("Sword", false);
-            anim.ResetTrigger("Attack");
+            //anim.ResetTrigger("Attack");
         }
 
         
 
         //Orientation needs to be refined cos the camera was behind the player
         gameCamera.transform.position = new Vector3(transform.position.x, transform.position.y, -20);
-
-
         exhausted = (jump_count == max_jumps);
+        if (isGrounded && exhausted)
+        {
+            jump_count = 0;
+            //Debug.Log("Exhausted");
+        }
         float y = GetComponent<Rigidbody2D>().velocity.y;
         float x = GetComponent<Rigidbody2D>().velocity.x;
+
+        //gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+
 
 
 #if UNITY_STANDALONE || UNITY_WEBPLAYER
 
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            anim.SetBool("Sword", true);
-            anim.SetTrigger("Attack");
-            //gameObject.GetComponent<NetworkAnimator>().SetTrigger("Attack");
-            if (NetworkServer.active)
-            {
-                //anim.ResetTrigger("Attack");
-            }
 
-
-        }
         moveVelocity = 0f;
         if (Input.GetKeyDown(KeyCode.Space) && !exhausted)
         {
@@ -139,30 +127,24 @@ public class PlayerScript : NetworkBehaviour{
             }
 
         }
-        if (isGrounded && exhausted)
-        {
-            jump_count = 0;
-            //Debug.Log("Exhausted");
-        }
+       
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             Debug.Log("Moving Left");
             float y_component = GetComponent<Rigidbody2D>().velocity.y;
-
-            this.GetComponent<Rigidbody2D>().velocity = new Vector2(-moveSpeed, y_component);
-           // Debug.Log("Fire coordinates: " + firePoint.transform.position.x + "," + firePoint.transform.position.y);
+            //this.GetComponent<Rigidbody2D>().velocity = new Vector2(-moveSpeed, y_component);
             moveVelocity = -moveSpeed;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
             Debug.Log("Moving Right");
             float y_component = GetComponent<Rigidbody2D>().velocity.y;
-           // Debug.Log("Fire coordinates: " + firePoint.transform.position.x + "," + firePoint.transform.position.y)
-            this.GetComponent<Rigidbody2D>().velocity = new Vector2(moveSpeed, y_component);
+            //this.GetComponent<Rigidbody2D>().velocity = new Vector2(moveSpeed, y_component);
             moveVelocity = moveSpeed;
         }
        
+        //Attacking code 
         if (Input.GetKeyDown(KeyCode.C))
         {
 
@@ -182,8 +164,16 @@ public class PlayerScript : NetworkBehaviour{
             }
         }
 
-
-       
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            anim.SetBool("Sword", true);
+            anim.SetTrigger("Attack");
+            //gameObject.GetComponent<NetworkAnimator>().SetTrigger("Attack");
+            if (NetworkServer.active)
+            {
+                //anim.ResetTrigger("Attack");
+            }
+        }
 
 #endif
 
@@ -193,6 +183,7 @@ public class PlayerScript : NetworkBehaviour{
             Debug.Log("Exhausted");
         }
 
+        //KnockBack Code 
         if (knockbackCount <= 0)
         {
             this.GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, GetComponent<Rigidbody2D>().velocity.y);
@@ -213,56 +204,50 @@ public class PlayerScript : NetworkBehaviour{
         }
 
 
-
+        //Animaor orientation code
         anim.SetFloat("Speed", Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x));//Null ref exception called after attempting to establish a connection 
 
         if (x > 0)
         {
-            //Debug.Log("Facing forwards");
             transform.localScale = new Vector3(1f, 1f, 1f);
             //firePoint.localScale = new Vector3(1f, 1f, 1f);
         }
         else if (x < 0)
         {
-            //Debug.Log("Facing backwards");
             transform.localScale = new Vector3(-1f, 1f, 1f);//set to -1 will flip player backwards
             //firePoint.localScale = new Vector3(-1f, 1f, 1f);
         }
         anim.SetBool("grounded", isGrounded);
+
     }
 
-
+    //Input functions 
         public void Move(float moveInput)
     {
         moveVelocity = moveSpeed * moveInput;
     }
 
-
     [Command]
     public void CmdFireStar(int orient)
     {
         Vector3 offset = new Vector3(1, 0, 0);
-        int speed = 5;
+        int speed = 10;
         //var projectile = Instantiate(ninjaStar, firePoint.position, firePoint.rotation);//Correct
         if (orient <0)
         {
             offset = new Vector3(-1, 0, 0);
         }
-        
-        
-        var projectile = (GameObject)Instantiate(ninjaStar, gameObject.transform.position+offset, firePoint.rotation);//cast to game object?
-
+        var projectile = (GameObject)Instantiate(ninjaStar, gameObject.transform.position+offset, firePoint.rotation);
         speed = orient * speed;
-        //Debug.Log("Instantiantion coordinates:" + point.transform.position.x + "," + point.transform.position.y);
         Debug.Log("Speed:" + speed + "," + transform.localScale.x);
-
-        projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, GetComponent<Rigidbody2D>().velocity.y);
-        NetworkServer.Spawn(projectile);//Needs revision 
+        projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
+        NetworkServer.Spawn(projectile);
         Destroy(projectile, 2.0f);
     }
 
     public void Jump()
     {
+        Debug.Log("Jump function called");
         if(jump_count > max_jumps &&isGrounded)
         {
             jump_count = 0;
@@ -275,11 +260,14 @@ public class PlayerScript : NetworkBehaviour{
         }
     }
 
-    void OnDestroy()
+    
+
+    void OnDestroy()//This will trigger for both games as long as a player object is destroyed 
     {
         if (isLocalPlayer)
         {
             gameCamera.transform.position = new Vector3(0, 0, -20);
+            GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(true);
         }
         /*
          MissingReferenceException: The object of type 'GameObject' has been destroyed but you are still trying to access it.
@@ -287,6 +275,8 @@ Your script should either check if it is null or you should not destroy the obje
 PlayerScript.OnDestroy () (at Assets/Scripts/PlayerScript.cs:239)
          */
     }
+
+
 
 }
 

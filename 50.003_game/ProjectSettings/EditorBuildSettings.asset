@@ -9,3 +9,5 @@ EditorBuildSettings:
     path: Assets/Levels/NetworkLobby.unity
   - enabled: 1
     path: Assets/Levels/Level_1.unity
+  - enabled: 1
+    path: Assets/Levels/GameOver.unity

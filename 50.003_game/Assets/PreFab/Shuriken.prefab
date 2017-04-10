@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114180230359696986}
   - component: {fileID: 114886367329190384}
   - component: {fileID: 114528960470503516}
+  - component: {fileID: 114210765045915946}
   m_Layer: 12
   m_Name: Shuriken
   m_TagString: Untagged
@@ -96,6 +97,18 @@ MonoBehaviour:
     type: 2}
   NinjaStarImpact: {fileID: 1985656111407100, guid: 3d601d4468613bd458c5c152903fb207,
     type: 2}
+--- !u!114 &114210765045915946
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1504313991652232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a00375c5bc1adab468c0d2450a2abbd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 20
 --- !u!114 &114528960470503516
 MonoBehaviour:
   m_ObjectHideFlags: 1
