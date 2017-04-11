@@ -26,7 +26,7 @@ public class SetUpLocalPlayer : NetworkBehaviour {
             gameObject.tag = "Player";
             //gameObject.GetComponent<SpriteRenderer>().color = playerColor;
 
-            //Debug.Log("Color: " + playerColor);
+            Debug.Log("Color: " + playerColor);
         }
 
         //For players who came late
@@ -35,7 +35,7 @@ public class SetUpLocalPlayer : NetworkBehaviour {
             gameObject.GetComponent<ReskinAnimation>().spriteSheetName = "Sprites_Green";
         }
         else if (playerColor.Equals(Color.black)){
-            gameObject.GetComponent<ReskinAnimation>().spriteSheetName = "Sprites_Black";
+           gameObject.GetComponent<ReskinAnimation>().spriteSheetName = "Sprites_Black";
         }
         else if (playerColor.Equals(Color.yellow)){
             gameObject.GetComponent<ReskinAnimation>().spriteSheetName = "Sprites_Yellow";
@@ -45,12 +45,7 @@ public class SetUpLocalPlayer : NetworkBehaviour {
             gameObject.GetComponent<ReskinAnimation>().spriteSheetName = "Sprites_Magenta";
         }
     }
-    
 
-    private void Update()
-    {
-        
-    }
 
     [Command]
     public void CmdChangeName()

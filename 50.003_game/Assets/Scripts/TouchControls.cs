@@ -1,46 +1,71 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class TouchControls : MonoBehaviour
+public class TouchControls : NetworkBehaviour
 {
     int orient;
     private PlayerScript thePlayer;
+    private GameObject player;
 
     // Use this for initialization
     void Start()
     {
         orient = 0;
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            thePlayer = player.GetComponent<PlayerScript>();
+            orient = (int)player.transform.localScale.x;
+        }
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        thePlayer = FindObjectOfType<PlayerScript>();
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            orient = (int)player.transform.localScale.x;
+        }
+        /*
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            thePlayer = player.GetComponent<PlayerScript>();
+        }
         if (player != null) {
             orient = (int)player.transform.localScale.x;
         }
+        */
     }
+
+
     public void LeftArrow()
     {
+        Debug.Log("Left pressed");
         thePlayer.Move(-1);
     }
     public void RightArrow()
     {
+        Debug.Log("Right pressed");
         thePlayer.Move(1);
     }
     public void UnpressedArrow()
     {
+        Debug.Log("Unpressed");
         thePlayer.Move(0);
     }
     public void Jump()
     {
-        Debug.Log("Jump button pressed");
+        Debug.Log("Jump pressed");
         thePlayer.Jump();
     }
     public void Shuriken()
     {
+        Debug.Log("Fire Shuriken");
         thePlayer.CmdFireStar(orient);
     }
 }
