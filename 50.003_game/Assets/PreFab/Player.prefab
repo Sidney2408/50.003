@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 114606060606935880}
   - component: {fileID: 114201469957933156}
   - component: {fileID: 114478730619108428}
-  - component: {fileID: 114385749460876632}
+  - component: {fileID: 114857638002296586}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -311,7 +311,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 1.5
   m_Material: {fileID: 6200000, guid: 492924bb65dc78540a538f9d2fdc44bf, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -573,25 +573,6 @@ MonoBehaviour:
     i15: 170
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
---- !u!114 &114385749460876632
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1207939955934916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1590678366, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Animator: {fileID: 95861088691552252}
-  m_ParameterSendBits: 0
-  param0: 
-  param1: 
-  param2: 
-  param3: 
-  param4: 
-  param5: 
 --- !u!114 &114460186925878256
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -604,7 +585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpHeight: 10
+  jumpHeight: 8.5
   groundCheck: {fileID: 4023135355801006}
   groundCheckRadius: 0.1
   whatIsGround:
@@ -615,9 +596,9 @@ MonoBehaviour:
   ninjaStar: {fileID: 1504313991652232, guid: 1d3a9ffafbf41ae49923b1b435ed88c8, type: 2}
   gameCamera: {fileID: 0}
   shotDelay: 1
-  knockback: 5
+  knockback: 10
   knockbackCount: 0
-  knockbackLength: 1
+  knockbackLength: 0.25
   knockFromRight: 0
   GameOverScreen: {fileID: 0}
 --- !u!114 &114474644172243222
@@ -656,6 +637,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f4f9ef227ce9ac4fbbfcaf0f4b635e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pname: player
+  playerColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114657847680223084
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -818,6 +801,18 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+--- !u!114 &114857638002296586
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1207939955934916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2946e9c267c40542a11b01710ace353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteSheetName: 
 --- !u!114 &114873279009513716
 MonoBehaviour:
   m_ObjectHideFlags: 1

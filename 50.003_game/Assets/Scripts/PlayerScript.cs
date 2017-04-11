@@ -71,8 +71,6 @@ public class PlayerScript : NetworkBehaviour{
             gameCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
 
-
-        gameObject.GetComponent < NetworkAnimator > ().SetParameterAutoSend(0, true);
         jump_count = 2;
     }
 
@@ -267,7 +265,10 @@ public class PlayerScript : NetworkBehaviour{
         if (isLocalPlayer)
         {
             gameCamera.transform.position = new Vector3(0, 0, -20);
-            GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(true);
+            if (GameOverScreen != null)
+            {
+                GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(true);
+            }
         }
         /*
          MissingReferenceException: The object of type 'GameObject' has been destroyed but you are still trying to access it.
