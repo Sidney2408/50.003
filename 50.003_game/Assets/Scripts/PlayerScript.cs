@@ -4,6 +4,8 @@ using UnityEngine.Networking;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Prototype.NetworkLobby;
+using UnityEngine.UI;
+
 
 
 
@@ -42,6 +44,8 @@ public class PlayerScript : NetworkBehaviour{
     //Dead state
     private bool isDead;
     public GameObject GameOverScreen;
+    public GameObject Canvas;
+    public Text name;
     
 
 
@@ -62,7 +66,6 @@ public class PlayerScript : NetworkBehaviour{
         GameOverScreen = GameObject.FindGameObjectWithTag("GameOverPanel");
         if (anim == null)
         {
-
             anim = GetComponent<Animator>();
         }
 
@@ -71,8 +74,18 @@ public class PlayerScript : NetworkBehaviour{
             gameCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
 
+
+        if (!isLocalPlayer)
+        {
+            Canvas.SetActive(false);
+        }
+
+
         jump_count = 2;
+
+        
     }
+
 
     void Update()
     {

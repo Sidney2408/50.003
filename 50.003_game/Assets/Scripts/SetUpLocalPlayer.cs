@@ -5,9 +5,9 @@ using UnityEngine.Networking;
 
 public class SetUpLocalPlayer : NetworkBehaviour {
     [SyncVar]//Tells server to sync to client
-    public string pname = "player";
+    public string playerName = "player";
     [SyncVar]
-    public Color playerColor = Color.white;//Not changing leh?
+    public Color playerColor = Color.white;
 
     private void OnGUI()
     {
@@ -16,19 +16,23 @@ public class SetUpLocalPlayer : NetworkBehaviour {
 
     // Use this for initialization
     void Start () {
+
         if (!isLocalPlayer)
         {
             gameObject.tag = "Enemy";
+           
         }
         else
         {
             //pname = GUI.TextField(new Rect(25, Screen.height - 40,100, 30), pname);
             gameObject.tag = "Player";
             //gameObject.GetComponent<SpriteRenderer>().color = playerColor;
-
+            Debug.Log(playerName);
             Debug.Log("Color: " + playerColor);
         }
 
+        //This happens regardless of player.
+        gameObject.GetComponent<PlayerScript>().name.text = playerName;
         //For players who came late
         if (playerColor.Equals(Color.green))
         {

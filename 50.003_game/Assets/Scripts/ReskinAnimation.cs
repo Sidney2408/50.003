@@ -8,11 +8,9 @@ public class ReskinAnimation : MonoBehaviour {
     {
 
         var subSprites = Resources.LoadAll<Sprite>("Characthers/"+spriteSheetName);
-        Debug.Log("Number of sprites: "+subSprites.Length);
         foreach (var renderer in GetComponentsInChildren<SpriteRenderer>())
         {
             string spriteName = renderer.sprite.name;
-            Debug.Log(spriteName);
             var newSprite = Array.Find(subSprites, item => item.name == spriteName);
             //Debug.Log(newSprite.name);
 

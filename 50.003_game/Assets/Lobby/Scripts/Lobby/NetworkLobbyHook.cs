@@ -13,9 +13,8 @@ namespace Prototype.NetworkLobby
             LobbyPlayer lobby = lobbyPlayer.GetComponent<LobbyPlayer>();
             SetUpLocalPlayer localPlayer = gamePlayer.GetComponent<SetUpLocalPlayer>();
 
-            localPlayer.pname = lobby.name;
+            localPlayer.playerName = lobby.playerName;
             localPlayer.playerColor = lobby.playerColor;
-            Debug.Log("Supposed to be this color: " + lobby.playerColor);
         }
 
     }

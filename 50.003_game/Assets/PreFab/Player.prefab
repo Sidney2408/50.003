@@ -186,8 +186,8 @@ GameObject:
   - component: {fileID: 222659752550197064}
   - component: {fileID: 114657847680223084}
   m_Layer: 5
-  m_Name: BackGround
-  m_TagString: Untagged
+  m_Name: HpBar
+  m_TagString: HpBar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -601,7 +601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f4f9ef227ce9ac4fbbfcaf0f4b635e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pname: player
+  playerName: player
   playerColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114460186925878256
 MonoBehaviour:
@@ -631,6 +631,8 @@ MonoBehaviour:
   knockbackLength: 0.25
   knockFromRight: 0
   GameOverScreen: {fileID: 0}
+  Canvas: {fileID: 1361856858357838}
+  name: {fileID: 114898012177329770}
 --- !u!114 &114474644172243222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -668,7 +670,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.36764705, b: 0.36764705, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -858,7 +860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
