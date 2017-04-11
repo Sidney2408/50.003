@@ -27,6 +27,8 @@ GameObject:
   - component: {fileID: 114250853757462442}
   - component: {fileID: 114606060606935880}
   - component: {fileID: 114201469957933156}
+  - component: {fileID: 114290259260581670}
+  - component: {fileID: 114437270662197898}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -208,13 +210,47 @@ MonoBehaviour:
     i15: 170
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
---- !u!114 &114460186925878256
+--- !u!114 &114290259260581670
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1207939955934916}
   m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f4f9ef227ce9ac4fbbfcaf0f4b635e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114437270662197898
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1207939955934916}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f944192e9aea4de43b9c2c4f243a1209, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 0
+  jumpHeight: 0
+  groundCheck: {fileID: 0}
+  groundCheckRadius: 0
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  max_jumps: 0
+  firePoint: {fileID: 0}
+  ninjaStar: {fileID: 0}
+  gameCamera: {fileID: 0}
+  shotDelay: 0
+--- !u!114 &114460186925878256
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1207939955934916}
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f944192e9aea4de43b9c2c4f243a1209, type: 3}
   m_Name: 
@@ -229,6 +265,7 @@ MonoBehaviour:
   max_jumps: 2
   firePoint: {fileID: 4160619074622114}
   ninjaStar: {fileID: 1504313991652232, guid: 1d3a9ffafbf41ae49923b1b435ed88c8, type: 2}
+  gameCamera: {fileID: 0}
   shotDelay: 1
 --- !u!114 &114606060606935880
 MonoBehaviour:
@@ -236,7 +273,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1207939955934916}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f4f9ef227ce9ac4fbbfcaf0f4b635e9, type: 3}
   m_Name: 

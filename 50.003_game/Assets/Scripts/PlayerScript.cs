@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 //Multilinecomments
 //Select a bunch of text then Ctrl+K+C
@@ -9,11 +10,13 @@ using UnityEngine;
 //2.Don't put 0 as x argument for move L/R; it kills upward velocity instantlry
 //float y_component = GetComponent<Rigidbody2D>().velocity.y; to capture initial velocity components
 
-public class PlayerScript : MonoBehaviour {
+public class PlayerScript : NetworkBehaviour {
     public float moveSpeed;
     public float jumpHeight;
     public Transform groundCheck;
     private float moveVelocity;
+    [SyncVar(hook = "OnMyColor")]
+    public Color playerColor;
 
     public float groundCheckRadius;
     public LayerMask whatIsGround;
@@ -43,6 +46,8 @@ public class PlayerScript : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+        playerColor = Color.white;
+        
         jump_count = 2;
         if (gameCamera == null)
         {
