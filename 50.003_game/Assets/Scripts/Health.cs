@@ -42,8 +42,8 @@ public class Health : NetworkBehaviour{
         {
             if (destroyOnDeath)
             {
-                Destroy(gameObject);
-
+                //Destroy(gameObject);
+                gameObject.GetComponent<PlayerScript>().isDead = true;
                 if (isLocalPlayer)
                 {
                     Debug.Log("You died!");

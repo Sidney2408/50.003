@@ -34,6 +34,7 @@ public class PlayerScript : NetworkBehaviour{
     public GameObject gameCamera;
     public float shotDelay;
     private float shotDelayCounter;
+    public int xOrientation;
 
     //Code for knockback 
     public float knockback;
@@ -42,8 +43,10 @@ public class PlayerScript : NetworkBehaviour{
     public bool knockFromRight;
 
     //Dead state
-    private bool isDead;
+    [SyncVar(hook ="onDead")]
+    public bool isDead;
     public GameObject GameOverScreen;
+    public GameObject[] TouchControls;
     public GameObject Canvas;
     public Text name;
     
@@ -62,6 +65,7 @@ public class PlayerScript : NetworkBehaviour{
     }
 
     void Start() {
+        xOrientation = 0;
         isDead = false;
         GameOverScreen = GameObject.FindGameObjectWithTag("GameOverPanel");
         if (anim == null)
@@ -77,7 +81,13 @@ public class PlayerScript : NetworkBehaviour{
 
         if (!isLocalPlayer)
         {
-            Canvas.SetActive(false);
+            //Canvas.SetActive(false);
+            
+            foreach (var button in TouchControls)
+            {
+                button.SetActive(false);
+            }
+           
         }
 
 
@@ -160,7 +170,7 @@ public class PlayerScript : NetworkBehaviour{
         {
 
             Debug.Log("Shots fired: " + firePoint.transform.position.x + "," + firePoint.transform.position.y);
-            CmdFireStar((int)transform.localScale.x);
+            CmdFireStar(xOrientation);
             shotDelayCounter = shotDelay;
         }
 
@@ -170,7 +180,7 @@ public class PlayerScript : NetworkBehaviour{
             if (shotDelayCounter <= 0)
             {
                 shotDelayCounter = shotDelay;
-                CmdFireStar((int)transform.localScale.x);
+                CmdFireStar(xOrientation);
 
             }
         }
@@ -220,12 +230,14 @@ public class PlayerScript : NetworkBehaviour{
 
         if (x > 0)
         {
-            transform.localScale = new Vector3(1f, 1f, 1f);
+            //transform.localScale = new Vector3(1f, 1f, 1f);
+            xOrientation = 1;
             //firePoint.localScale = new Vector3(1f, 1f, 1f);
         }
         else if (x < 0)
         {
-            transform.localScale = new Vector3(-1f, 1f, 1f);//set to -1 will flip player backwards
+            //transform.localScale = new Vector3(-1f, 1f, 1f);//set to -1 will flip player backwards
+            xOrientation = -1;
             //firePoint.localScale = new Vector3(-1f, 1f, 1f);
         }
         anim.SetBool("grounded", isGrounded);
@@ -275,6 +287,7 @@ public class PlayerScript : NetworkBehaviour{
 
     void OnDestroy()//This will trigger for both games as long as a player object is destroyed 
     {
+        /*
         if (isLocalPlayer)
         {
             gameCamera.transform.position = new Vector3(0, 0, -20);
@@ -283,12 +296,30 @@ public class PlayerScript : NetworkBehaviour{
                 GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(true);
             }
         }
-        /*
+        
          MissingReferenceException: The object of type 'GameObject' has been destroyed but you are still trying to access it.
 Your script should either check if it is null or you should not destroy the object.
 PlayerScript.OnDestroy () (at Assets/Scripts/PlayerScript.cs:239)
          */
     }
+
+    public void onDead(bool dead)
+    {
+        Debug.Log("You died? " + dead);
+        if (dead) {
+            if (isLocalPlayer)
+            {
+                gameCamera.transform.position = new Vector3(0, 0, -20);
+                if (GameOverScreen != null)
+                {
+                    GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(true);
+                }
+            }
+
+        }
+    }
+
+
 
 
 

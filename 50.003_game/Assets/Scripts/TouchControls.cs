@@ -28,7 +28,7 @@ public class TouchControls : NetworkBehaviour
 
         if (player != null)
         {
-            orient = (int)player.transform.localScale.x;
+            orient = player.GetComponent<PlayerScript>().xOrientation;
         }
         /*
         if(player == null)
