@@ -1,10 +1,11 @@
 fileFormatVersion: 2
 guid: 71442ad2236215742a2d66542140591f
-timeCreated: 1491990369
+timeCreated: 1492047665
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: PlayerIdle
+    21300000: PlayerLeft
+    21300002: PlayerIdle
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -41,7 +42,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 200
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1

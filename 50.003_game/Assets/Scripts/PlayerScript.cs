@@ -29,7 +29,6 @@ public class PlayerScript : NetworkBehaviour{
     private Animator anim;
 
     //Code for shooting 
-    public Transform firePoint;
     public GameObject ninjaStar;
     public GameObject gameCamera;
     public float shotDelay;
@@ -49,6 +48,7 @@ public class PlayerScript : NetworkBehaviour{
     public GameObject[] TouchControls;
     public GameObject Canvas;
     public Text name;
+    public GameObject HealthBar;
     
 
 
@@ -65,7 +65,7 @@ public class PlayerScript : NetworkBehaviour{
     }
 
     void Start() {
-        xOrientation = 0;
+        xOrientation = 1;
         isDead = false;
         GameOverScreen = GameObject.FindGameObjectWithTag("GameOverPanel");
         if (anim == null)
@@ -99,11 +99,26 @@ public class PlayerScript : NetworkBehaviour{
 
     void Update()
     {
-
+        HealthBar.transform.position = gameObject.transform.position+ new Vector3(0f, 0.75f,0f);
         if (!isLocalPlayer)
         {
             return;
         }
+
+        if (isDead)
+        {
+            this.GetComponent<ReskinAnimation>().spriteSheetName = "Tombstone";
+            anim.SetFloat("Speed", 0f);
+            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
+            return;
+        }
+
+        
+        if (shotDelayCounter>0)
+        {
+            shotDelayCounter -= Time.deltaTime;
+        }
+
 
         if (anim.GetBool("Sword"))
         {
@@ -169,7 +184,7 @@ public class PlayerScript : NetworkBehaviour{
         if (Input.GetKeyDown(KeyCode.C))
         {
 
-            Debug.Log("Shots fired: " + firePoint.transform.position.x + "," + firePoint.transform.position.y);
+            //Debug.Log("Shots fired: " + firePoint.transform.position.x + "," + firePoint.transform.position.y);
             CmdFireStar(xOrientation);
             shotDelayCounter = shotDelay;
         }
@@ -187,13 +202,15 @@ public class PlayerScript : NetworkBehaviour{
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            anim.SetBool("Sword", true);
-            anim.SetTrigger("Attack");
+            //anim.SetBool("Sword", true);
+            //anim.SetTrigger("Attack");
             //gameObject.GetComponent<NetworkAnimator>().SetTrigger("Attack");
             if (NetworkServer.active)
             {
                 //anim.ResetTrigger("Attack");
             }
+
+            GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, -20);
         }
 
 #endif
@@ -253,19 +270,25 @@ public class PlayerScript : NetworkBehaviour{
     [Command]
     public void CmdFireStar(int orient)
     {
-        Vector3 offset = new Vector3(1, 0, 0);
-        int speed = 10;
-        //var projectile = Instantiate(ninjaStar, firePoint.position, firePoint.rotation);//Correct
-        if (orient <0)
+        if (shotDelayCounter <= 0)
         {
-            offset = new Vector3(-1, 0, 0);
+            shotDelayCounter = shotDelay;
+            Vector3 offset = new Vector3(1, 0, 0);
+            int speed = 10;
+            //var projectile = Instantiate(ninjaStar, firePoint.position, firePoint.rotation);//Correct
+            if (orient < 0)
+            {
+                offset = new Vector3(-1, 0, 0);
+            }
+            var projectile = (GameObject)Instantiate(ninjaStar, gameObject.transform.position + offset, Quaternion.identity);
+            speed = orient * speed;
+            Debug.Log("Speed:" + speed + "," + transform.localScale.x);
+            projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
+            NetworkServer.Spawn(projectile);
+            Destroy(projectile, 2.0f);
         }
-        var projectile = (GameObject)Instantiate(ninjaStar, gameObject.transform.position+offset, firePoint.rotation);
-        speed = orient * speed;
-        Debug.Log("Speed:" + speed + "," + transform.localScale.x);
-        projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
-        NetworkServer.Spawn(projectile);
-        Destroy(projectile, 2.0f);
+
+       
     }
 
     public void Jump()

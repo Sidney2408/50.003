@@ -6,8 +6,10 @@ using System.Collections;
 
 public class Health : NetworkBehaviour{
 
-    public const int maxHealth = 100;
+    public const int maxHealth = 125;
     public bool destroyOnDeath;
+    public float invincibilityCounter;
+    public const float invincibilityFrames = 0.75f;
 
     [SyncVar(hook = "OnChangeHealth")]
     public int currentHealth = maxHealth;//Sync var has indeed changed 
@@ -24,16 +26,31 @@ public class Health : NetworkBehaviour{
         }
         */
     }
+    private void Update()
+    {
+        if (invincibilityCounter > 0)
+        {
+            invincibilityCounter -= Time.deltaTime;
+        }
+        else if (invincibilityCounter<0)
+        {
+            invincibilityCounter = 0;
+        }
+    }
 
     public void TakeDamage(int amount)
     {
+
+        if (invincibilityCounter >0)
+        {
+            Debug.Log("Can't be damaged");
+            return;
+        }
         if (!isServer)
         {
             Debug.Log("NOT server");
             return;
         }
-            
-
         currentHealth -= amount;//HP reduced
         Debug.Log("Current Health: " + currentHealth);
         Debug.Log("Your health is supposed to drop here");
@@ -52,6 +69,8 @@ public class Health : NetworkBehaviour{
                 
             }
         }
+        invincibilityCounter = invincibilityFrames;
+
     }
 
     void OnChangeHealth(int newhealth)

@@ -6,6 +6,7 @@ public class BillBoard : MonoBehaviour {
 
     void Update()
     {
+        
         //transform.LookAt(Camera.main.transform);
         GetComponent<Canvas>().worldCamera = Camera.main;
     }
