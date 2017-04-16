@@ -463,11 +463,11 @@ PlayerSettings:
   vrEditorSettings: {}
   cloudServicesEnabled:
     Build: 0
-    Collab: 1
+    Collab: 0
     ErrorHub: 0
     Hub: 0
     UNet: 1
-  cloudProjectId: f64267c8-60af-4ac5-8d0a-a08c272f7a76
-  projectName: 50.003_game
+  cloudProjectId: 54d6b079-65fc-4e21-ade1-1aa7a8185b88
+  projectName: 50.003_game (1)
   organizationId: yakjunlun
   cloudEnabled: 0

@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
+
 
 public class KillPlayer : MonoBehaviour {
     public LevelManager levelManager;
@@ -16,12 +16,17 @@ public class KillPlayer : MonoBehaviour {
 	}
     private void OnTriggerEnter2D(Collider2D other)//Whatever enters the colliderzone
     {
-
-       //Always remember to set your collider to isTrigger!
-        if (other.name.Equals( "Player"))
+        var health = other.GetComponent<Health>();
+        if (health != null)
         {
-            levelManager.RespawnPlayer();
+            health.TakeDamage(100);
         }
+
+        //Destroy(gameObject);
+
+        //Always remember to set your collider to isTrigger!
+
     }//Player walks into the zone and trigger triggers
+
 
 }

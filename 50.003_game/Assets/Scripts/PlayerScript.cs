@@ -1,182 +1,394 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Prototype.NetworkLobby;
+using UnityEngine.UI;
 
-//Multilinecomments
-//Select a bunch of text then Ctrl+K+C
-//Bug fixes:
-//1.GetKey, not GetKeyDown for moving (ConstantForce velocity)
-//2.Don't put 0 as x argument for move L/R; it kills upward velocity instantlry
-//float y_component = GetComponent<Rigidbody2D>().velocity.y; to capture initial velocity components
 
-public class PlayerScript : NetworkBehaviour {
+
+
+
+public class PlayerScript : NetworkBehaviour{
+    //Code for moving 
     public float moveSpeed;
     public float jumpHeight;
     public Transform groundCheck;
     private float moveVelocity;
-    [SyncVar(hook = "OnMyColor")]
-    public Color playerColor;
 
+    //Code for jumping 
     public float groundCheckRadius;
     public LayerMask whatIsGround;
-    private bool isGrounded;//We only want the object to decide if it is on the ground
+    private bool isGrounded;
     private bool exhausted;
     private int jump_count;
-
     public int max_jumps;
+
+    //Animator
     private Animator anim;
 
-    public Transform firePoint;
+    //Code for shooting 
     public GameObject ninjaStar;
     public GameObject gameCamera;
     public float shotDelay;
     private float shotDelayCounter;
+    public int xOrientation;
+
+    //Code for knockback 
+    public float knockback;
+    public float knockbackCount;
+    public float knockbackLength;
+    public bool knockFromRight;
+
+    //Dead state
+    [SyncVar(hook ="onDead")]
+    public bool isDead;
+    public GameObject GameOverScreen;
+    public GameObject[] TouchControls;
+    public GameObject Canvas;
+    public Text name;
+    public GameObject HealthBar;
+    
+
 
 
     private void FixedUpdate()
     {
+
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
 
-        //Create a circle
-        //TransformPoint, we need posn of Transform
-        //
-        anim = GetComponent<Animator>();
-    }
+        if (anim == null)
+        {
+            anim = GetComponent<Animator>();
+        }
+        }
 
-    // Use this for initialization
     void Start() {
-        playerColor = Color.white;
-        
-        jump_count = 2;
+        xOrientation = 1;
+        isDead = false;
+        GameOverScreen = GameObject.FindGameObjectWithTag("GameOverPanel");
+        if (anim == null)
+        {
+            anim = GetComponent<Animator>();
+        }
+
         if (gameCamera == null)
         {
-            // UNDONE:  
             gameCamera = GameObject.FindGameObjectWithTag("MainCamera");
-            gameCamera.GetComponent<CameraController>().enabled = true;
         }
+
+
+        if (!isLocalPlayer)
+        {
+            //Canvas.SetActive(false);
+            
+            foreach (var button in TouchControls)
+            {
+                button.SetActive(false);
+            }
+           
+        }
+
+
+        jump_count = 0;
+
+        
     }
 
 
-    //}
-
-    // Update is called once per frame
     void Update()
     {
-        exhausted = (jump_count == max_jumps);
+        HealthBar.transform.position = gameObject.transform.position+ new Vector3(0f, 0.75f,0f);
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
+        if (isDead)
+        {
+            this.GetComponent<ReskinAnimation>().spriteSheetName = "Tombstone";
+            anim.SetFloat("Speed", 0f);
+            gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(0f, 0f);
+            return;
+        }
+
+        
+        if (shotDelayCounter>0)
+        {
+            shotDelayCounter -= Time.deltaTime;
+        }
+
+
+        if (anim.GetBool("Sword"))
+        {
+            anim.SetBool("Sword", false);
+            //anim.ResetTrigger("Attack");
+        }
+
+        
+
+        //Orientation needs to be refined cos the camera was behind the player
+        gameCamera.transform.position = new Vector3(transform.position.x, transform.position.y, -20);
+        //exhausted = (jump_count == max_jumps);
+        //if (isGrounded)
+        //{
+          //  jump_count = 0;
+            //Debug.Log("Exhausted");
+       // }
         float y = GetComponent<Rigidbody2D>().velocity.y;
         float x = GetComponent<Rigidbody2D>().velocity.x;
-        //
+
+        //gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+
+
 
 #if UNITY_STANDALONE || UNITY_WEBPLAYER
+
+
         moveVelocity = 0f;
-        if (Input.GetKeyDown(KeyCode.Space) && !exhausted)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
+            Jump();
+                }
+        //{
+        //    Debug.Log("JUMPCOUNT IS " + jump_count);
+        //    Debug.Log("Jumping" + jump_count);
   
-            jump_count++;
-            if (jump_count < 1)
-            {
-                float x_component = GetComponent<Rigidbody2D>().velocity.x;
-                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
-            }
-            else
-            {
-                float x_component = GetComponent<Rigidbody2D>().velocity.x;
-                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight / 4 * 3);
-            }
+            
+        //    if (jump_count < 1)
+        //    {
+        //        float x_component = GetComponent<Rigidbody2D>().velocity.x;
+        //        this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
+                
+        //    }
+        //    else
+        //    {
+        //        float x_component = GetComponent<Rigidbody2D>().velocity.x;
+        //        this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight / 2);
+        //    }
+        //    jump_count++;
+        //    Debug.Log("JUMPCOUNT IS " + jump_count);
+        //    return;
+        //}
+       
 
-        }
-        if (isGrounded && exhausted)
-        {
-            jump_count = 0;
-            //Debug.Log("Exhausted");
-        }
-
-
-        moveVelocity = 0f;
         if (Input.GetKey(KeyCode.LeftArrow))
         {
+            //Debug.Log("Moving Left");
             float y_component = GetComponent<Rigidbody2D>().velocity.y;
             //this.GetComponent<Rigidbody2D>().velocity = new Vector2(-moveSpeed, y_component);
             moveVelocity = -moveSpeed;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
+            //Debug.Log("Moving Right");
             float y_component = GetComponent<Rigidbody2D>().velocity.y;
             //this.GetComponent<Rigidbody2D>().velocity = new Vector2(moveSpeed, y_component);
             moveVelocity = moveSpeed;
         }
        
+        //Attacking code 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            FireStar();
+
+            //Debug.Log("Shots fired: " + firePoint.transform.position.x + "," + firePoint.transform.position.y);
+            CmdFireStar(xOrientation);
             shotDelayCounter = shotDelay;
         }
+
         if (Input.GetKey(KeyCode.C))
         {
             shotDelayCounter -= Time.deltaTime;
             if (shotDelayCounter <= 0)
             {
                 shotDelayCounter = shotDelay;
-                FireStar();
+                CmdFireStar(xOrientation);
 
             }
         }
 
-#endif
-        if (isGrounded && exhausted)
+        if (Input.GetKeyDown(KeyCode.S))
         {
-            jump_count = 0;
-            Debug.Log("Exhausted");
+            //anim.SetBool("Sword", true);
+            //anim.SetTrigger("Attack");
+            //gameObject.GetComponent<NetworkAnimator>().SetTrigger("Attack");
+            if (NetworkServer.active)
+            {
+                //anim.ResetTrigger("Attack");
+            }
+
+            GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, -20);
         }
-        this.GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, GetComponent<Rigidbody2D>().velocity.y);
-        //This code will instantly stop the characther if no key is pressed
+
+#endif
+
+        
+
+        //KnockBack Code 
+        if (knockbackCount <= 0)
+        {
+            this.GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, GetComponent<Rigidbody2D>().velocity.y);
+            //This code will instantly stop the characther if no key is pressed
+        }
+        else
+        {
+            //if not knockback
+            if (knockFromRight)
+            {
+                this.GetComponent<Rigidbody2D>().velocity = new Vector2(-knockback, GetComponent<Rigidbody2D>().velocity.y);
+            }
+            if (!knockFromRight)
+            {
+                this.GetComponent<Rigidbody2D>().velocity = new Vector2(knockback, GetComponent<Rigidbody2D>().velocity.y);
+            }
+            knockbackCount -= Time.deltaTime;//Countdown
+        }
 
 
+        //Animaor orientation code
+        anim.SetFloat("Speed", Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x));//Null ref exception called after attempting to establish a connection 
 
-        anim.SetFloat("Speed", Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x));
         if (x > 0)
         {
-            transform.localScale = new Vector3(1f, 1f, 1f);
+            //transform.localScale = new Vector3(1f, 1f, 1f);
+            xOrientation = 1;
+            //firePoint.localScale = new Vector3(1f, 1f, 1f);
         }
         else if (x < 0)
         {
-            transform.localScale = new Vector3(-1f, 1f, 1f);//set to -1 will flip player backwards
+            //transform.localScale = new Vector3(-1f, 1f, 1f);//set to -1 will flip player backwards
+            xOrientation = -1;
+            //firePoint.localScale = new Vector3(-1f, 1f, 1f);
+        }
+        if (isGrounded)
+        {
+            jump_count = 0;
+            exhausted = false;
+            //Debug.Log("Exhausted");
         }
         anim.SetBool("grounded", isGrounded);
+
     }
 
-
+    //Input functions 
         public void Move(float moveInput)
     {
         moveVelocity = moveSpeed * moveInput;
     }
 
-    public void FireStar()
+    [Command]
+    public void CmdFireStar(int orient)
     {
-        Instantiate(ninjaStar, firePoint.position, firePoint.rotation);
+        if (shotDelayCounter <= 0)
+        {
+            shotDelayCounter = shotDelay;
+            Vector3 offset = new Vector3(1, 0, 0);
+            int speed = 10;
+            //var projectile = Instantiate(ninjaStar, firePoint.position, firePoint.rotation);//Correct
+            if (orient < 0)
+            {
+                offset = new Vector3(-1, 0, 0);
+            }
+            var projectile = (GameObject)Instantiate(ninjaStar, gameObject.transform.position + offset, Quaternion.identity);
+            speed = orient * speed;
+            Debug.Log("Speed:" + speed + "," + transform.localScale.x);
+            projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
+            NetworkServer.Spawn(projectile);
+            Destroy(projectile, 2.0f);
+        }
+
+       
     }
 
     public void Jump()
     {
-        Debug.Log("JumpCount: "+jump_count);
-        Debug.Log("MaxJump: " + max_jumps);
-        Debug.Log("Exhausted: " + exhausted);
-        Debug.Log("Grounded: " + isGrounded);
+        if (jump_count > max_jumps)
+        {
+            exhausted = true;
+        }
+        Debug.Log("Jump function called");
+        Debug.Log("JUMPCOUNT IS " + jump_count);
+        Debug.Log("Exhausted? " + exhausted);
+
+        if (!exhausted)
+        {
+            if (isGrounded)
+            {
+                Debug.Log("Jump high " + jump_count);
+                float x_component = GetComponent<Rigidbody2D>().velocity.x;
+                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
+                jump_count++;
+                isGrounded = false;
+
+            }
+            else
+            {
+                Debug.Log("Jump low " + jump_count);
+                float x_component = GetComponent<Rigidbody2D>().velocity.x;
+                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight / 4 * 3);
+                jump_count++;
+                exhausted = true;
+                Debug.Log("is exhausted now");
+            }
+            
+        }
         
-        if(jump_count > max_jumps &&isGrounded)
-        {
-            jump_count = 0;
-        }
-        if (jump_count<max_jumps)
-        {
-            jump_count++;
-            float x_component = GetComponent<Rigidbody2D>().velocity.x;
-            this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
-        }
+        //Debug.Log("JUMPCOUNT IS " + jump_count);
+        //if (jump_count > max_jumps &&isGrounded)
+        //{
+        //    jump_count = 0;
+        //}
+        //if (jump_count<max_jumps)
+        //{
+        //    jump_count++;
+        //    float x_component = GetComponent<Rigidbody2D>().velocity.x;
+        //    this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
+        //}
     }
-}
 
     
+
+    void OnDestroy()//This will trigger for both games as long as a player object is destroyed 
+    {
+        /*
+        if (isLocalPlayer)
+        {
+            gameCamera.transform.position = new Vector3(0, 0, -20);
+            if (GameOverScreen != null)
+            {
+                GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(true);
+            }
+        }
+        
+         MissingReferenceException: The object of type 'GameObject' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.
+PlayerScript.OnDestroy () (at Assets/Scripts/PlayerScript.cs:239)
+         */
+    }
+
+    public void onDead(bool dead)
+    {
+        Debug.Log("You died? " + dead);
+        if (dead) {
+            if (isLocalPlayer)
+            {
+                gameCamera.transform.position = new Vector3(0, 0, -20);
+                if (GameOverScreen != null)
+                {
+                    GameOverScreen.GetComponent<GameOverPanel>().ToggleVisibility(true);
+                }
+            }
+
+        }
+    }
+
+
+
+
+
+}
+
+
 
 

@@ -48,10 +48,9 @@ namespace Prototype.NetworkLobby
         {
             lobbyManager.ChangeTo(null);
             lobbyManager.StartServer();
-
             lobbyManager.backDelegate = lobbyManager.StopServerClbk;
-
             lobbyManager.SetServerInfo("Dedicated Server", lobbyManager.networkAddress);
+            Debug.Log("Lobby network address: "+ lobbyManager.networkAddress);
         }
 
         public void OnClickCreateMatchmakingGame()
