@@ -11,9 +11,10 @@ public class Health : NetworkBehaviour{
     public float invincibilityCounter;
     public const float invincibilityFrames = 0.75f;
 
+
+
     [SyncVar(hook = "OnChangeHealth")]
     public int currentHealth = maxHealth;//Sync var has indeed changed 
-
     public RectTransform healthBar;
     //private NetworkStartPosition[] spawnPoints;
 
@@ -40,7 +41,7 @@ public class Health : NetworkBehaviour{
 
     public void TakeDamage(int amount)
     {
-
+        GetComponent<AudioSource>().Play();
         if (invincibilityCounter >0)
         {
             Debug.Log("Can't be damaged");

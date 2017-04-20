@@ -30,16 +30,7 @@ public class TouchControls : NetworkBehaviour
         {
             orient = player.GetComponent<PlayerScript>().xOrientation;
         }
-        /*
-        if(player == null)
-        {
-            player = GameObject.FindGameObjectWithTag("Player");
-            thePlayer = player.GetComponent<PlayerScript>();
-        }
-        if (player != null) {
-            orient = (int)player.transform.localScale.x;
-        }
-        */
+   
     }
 
 
@@ -66,6 +57,11 @@ public class TouchControls : NetworkBehaviour
     public void Shuriken()
     {
         Debug.Log("Fire Shuriken");
-        thePlayer.CmdFireStar(orient);
+        thePlayer.fireStar(orient);
+    }
+    public void Stomp()
+    {
+        Debug.Log("Fire Shuriken");
+        thePlayer.Stomp();
     }
 }

@@ -37,4 +37,9 @@ public class Shuriken : MonoBehaviour {
         Instantiate(this.NinjaStarImpact, transform.position, transform.rotation);
         Destroy(gameObject);
     }
+    private void OnDestroy()
+    {
+        GetComponent<AudioSource>().Play();
+
+    }
 }

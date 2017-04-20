@@ -51,11 +51,4 @@ public class SetUpLocalPlayer : NetworkBehaviour {
     }
 
 
-    [Command]
-    public void CmdChangeName()
-    {
-
-    }
-
-
 }

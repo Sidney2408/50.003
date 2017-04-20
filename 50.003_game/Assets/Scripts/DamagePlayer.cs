@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class DamagePlayer : MonoBehaviour {
     public int damage;
+    public GameObject damageEffect;
+    public GameObject Stomper;
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -13,6 +16,12 @@ public class DamagePlayer : MonoBehaviour {
         if (health != null && player != null)
         {
             health.TakeDamage(damage);
+            if (Stomper!=null){
+                Stomper.SetActive(false);
+            }
+
+            Instantiate(damageEffect, transform.position, transform.rotation);
+
             player.knockbackCount = player.knockbackLength;
             if (collision.transform.position.x < transform.position.x)
             {

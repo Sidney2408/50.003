@@ -25,6 +25,11 @@ public class PlayerScript : NetworkBehaviour{
     private int jump_count;
     public int max_jumps;
 
+    //Stomping:
+    public GameObject Stomper;
+    public float stompDelay;
+    public float stompCounter;
+
     //Animator
     private Animator anim;
 
@@ -34,6 +39,7 @@ public class PlayerScript : NetworkBehaviour{
     public float shotDelay;
     private float shotDelayCounter;
     public int xOrientation;
+    private float TimeStamp;
 
     //Code for knockback 
     public float knockback;
@@ -49,6 +55,14 @@ public class PlayerScript : NetworkBehaviour{
     public GameObject Canvas;
     public Text name;
     public GameObject HealthBar;
+
+    GameObject[] enemies;
+
+    [SyncVar]
+    public int num_dead;
+
+    
+
     
 
 
@@ -65,6 +79,12 @@ public class PlayerScript : NetworkBehaviour{
     }
 
     void Start() {
+        TimeStamp = Time.time;
+        if(enemies == null)
+        {
+            enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        }
+        num_dead = 0;
         xOrientation = 1;
         isDead = false;
         GameOverScreen = GameObject.FindGameObjectWithTag("GameOverPanel");
@@ -91,7 +111,7 @@ public class PlayerScript : NetworkBehaviour{
         }
 
 
-        jump_count = 2;
+        jump_count = 0;
 
         
     }
@@ -103,6 +123,10 @@ public class PlayerScript : NetworkBehaviour{
         if (!isLocalPlayer)
         {
             return;
+        }
+        if (num_dead>0&&!isDead)
+        {
+            Debug.Log("You win");
         }
 
         if (isDead)
@@ -118,24 +142,20 @@ public class PlayerScript : NetworkBehaviour{
         {
             shotDelayCounter -= Time.deltaTime;
         }
-
-
-        if (anim.GetBool("Sword"))
+        if (stompCounter > 0)
         {
-            anim.SetBool("Sword", false);
-            //anim.ResetTrigger("Attack");
+            stompDelay -= Time.deltaTime;
         }
 
-        
 
         //Orientation needs to be refined cos the camera was behind the player
         gameCamera.transform.position = new Vector3(transform.position.x, transform.position.y, -20);
-        exhausted = (jump_count == max_jumps);
-        if (isGrounded && exhausted)
-        {
-            jump_count = 0;
-            //Debug.Log("Exhausted");
-        }
+        //exhausted = (jump_count == max_jumps);
+        //if (isGrounded && exhausted)
+        //{
+        //    jump_count = 0;
+        //    //Debug.Log("Exhausted");
+        //}
         float y = GetComponent<Rigidbody2D>().velocity.y;
         float x = GetComponent<Rigidbody2D>().velocity.x;
 
@@ -147,20 +167,10 @@ public class PlayerScript : NetworkBehaviour{
 
 
         moveVelocity = 0f;
-        if (Input.GetKeyDown(KeyCode.Space) && !exhausted)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-  
-            jump_count++;
-            if (jump_count < 1)
-            {
-                float x_component = GetComponent<Rigidbody2D>().velocity.x;
-                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
-            }
-            else
-            {
-                float x_component = GetComponent<Rigidbody2D>().velocity.x;
-                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight / 4 * 3);
-            }
+
+            Jump();
 
         }
        
@@ -202,24 +212,17 @@ public class PlayerScript : NetworkBehaviour{
 
         if (Input.GetKeyDown(KeyCode.S))
         {
-            //anim.SetBool("Sword", true);
-            //anim.SetTrigger("Attack");
-            //gameObject.GetComponent<NetworkAnimator>().SetTrigger("Attack");
-            if (NetworkServer.active)
-            {
-                //anim.ResetTrigger("Attack");
-            }
 
-            GetComponent<Rigidbody2D>().velocity = new Vector2(moveVelocity, -20);
+            Stomp();
         }
-
+     
 #endif
 
-        if (isGrounded && exhausted)
-        {
-            jump_count = 0;
-            Debug.Log("Exhausted");
-        }
+        //if (isGrounded && exhausted)
+        //{
+        //    jump_count = 0;
+        //    Debug.Log("Exhausted");
+        //}
 
         //KnockBack Code 
         if (knockbackCount <= 0)
@@ -257,6 +260,13 @@ public class PlayerScript : NetworkBehaviour{
             xOrientation = -1;
             //firePoint.localScale = new Vector3(-1f, 1f, 1f);
         }
+        if (isGrounded)
+        {
+            jump_count = 0;
+            exhausted = false;
+            Stomper.SetActive(false);
+            //Debug.Log("Exhausted");
+        }
         anim.SetBool("grounded", isGrounded);
 
     }
@@ -270,9 +280,7 @@ public class PlayerScript : NetworkBehaviour{
     [Command]
     public void CmdFireStar(int orient)
     {
-        if (shotDelayCounter <= 0)
-        {
-            shotDelayCounter = shotDelay;
+      
             Vector3 offset = new Vector3(1, 0, 0);
             int speed = 10;
             //var projectile = Instantiate(ninjaStar, firePoint.position, firePoint.rotation);//Correct
@@ -283,30 +291,78 @@ public class PlayerScript : NetworkBehaviour{
             var projectile = (GameObject)Instantiate(ninjaStar, gameObject.transform.position + offset, Quaternion.identity);
             speed = orient * speed;
             Debug.Log("Speed:" + speed + "," + transform.localScale.x);
-            projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, 0);
+            projectile.GetComponent<Rigidbody2D>().velocity = new Vector2(speed, GetComponent<Rigidbody2D>().velocity.y/2);
             NetworkServer.Spawn(projectile);
             Destroy(projectile, 2.0f);
-        }
-
-       
+        
     }
-
+    public void fireStar(int orient){
+        if (TimeStamp <= Time.time)
+        {
+            TimeStamp = Time.time +shotDelay;
+            CmdFireStar(orient);
+        }
+        }
     public void Jump()
     {
-        Debug.Log("Jump function called");
-        if(jump_count > max_jumps &&isGrounded)
+
+        if (jump_count > max_jumps)
         {
-            jump_count = 0;
+            exhausted = true;
         }
-        if (jump_count<max_jumps)
+        Debug.Log("Jump function called");
+        Debug.Log("JUMPCOUNT IS " + jump_count);
+        Debug.Log("Exhausted? " + exhausted);
+
+        if (!exhausted)
         {
-            jump_count++;
-            float x_component = GetComponent<Rigidbody2D>().velocity.x;
-            this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
+            if (isGrounded)
+            {
+                Debug.Log("Jump high " + jump_count);
+                float x_component = GetComponent<Rigidbody2D>().velocity.x;
+                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
+                jump_count++;
+                isGrounded = false;
+
+            }
+            else
+            {
+                Debug.Log("Jump low " + jump_count);
+                float x_component = GetComponent<Rigidbody2D>().velocity.x;
+                this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight / 4 * 3);
+                jump_count++;
+                exhausted = true;
+                Debug.Log("is exhausted now");
+            }
+
+        }
+        //Debug.Log("Jump function called");
+        //if(jump_count > max_jumps &&isGrounded)
+        //{
+        //    jump_count = 0;
+        //}
+        //if (jump_count<max_jumps)
+        //{
+        //    jump_count++;
+        //    float x_component = GetComponent<Rigidbody2D>().velocity.x;
+        //    this.GetComponent<Rigidbody2D>().velocity = new Vector2(x_component, jumpHeight);
+        //}
+    }
+
+    public void Stomp()
+    {
+        if (stompCounter <= 0)
+        {
+            shotDelayCounter = stompDelay;
+            if (Stomper != null)
+            {
+                Stomper.SetActive(true);
+            }
+            GetComponent<Rigidbody2D>().velocity = new Vector2(0, -25);
         }
     }
 
-    
+
 
     void OnDestroy()//This will trigger for both games as long as a player object is destroyed 
     {
@@ -329,6 +385,8 @@ PlayerScript.OnDestroy () (at Assets/Scripts/PlayerScript.cs:239)
     public void onDead(bool dead)
     {
         Debug.Log("You died? " + dead);
+        num_dead++;
+        Debug.Log(num_dead);
         if (dead) {
             if (isLocalPlayer)
             {
