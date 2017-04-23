@@ -6,8 +6,6 @@ public class DamagePlayer : MonoBehaviour {
     public int damage;
     public GameObject damageEffect;
     public GameObject Stomper;
-
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         var hit = collision.gameObject;
